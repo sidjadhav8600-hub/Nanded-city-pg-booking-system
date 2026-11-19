@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Nanded City PG Booking</title>
+
+<style>
+body {
+  margin: 0;
+  font-family: 'Segoe UI', sans-serif;
+  background: linear-gradient(135deg,#1d2b64,#f8cdda);
+}
+
+header {
+  text-align: center;
+  padding: 30px;
+  color: white;
+}
+
+header h1 {
+  font-size: 32px;
+  margin: 0;
+}
+
+.container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.controls {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+select, input {
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin: 5px;
+  width: 200px;
+}
+
+.pg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px,1fr));
+  gap: 20px;
+}
+
+.pg-card {
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  transition: 0.3s;
+  color: white;
+  position: relative;
+}
+
+.pg-card:hover {
+  transform: translateY(-8px);
+}
+
+.pg-card img {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+.pg-content {
+  padding: 15px;
+}
+
+.pg-content h3 {
+  margin: 0 0 10px;
+}
+
+.price {
+  font-size: 20px;
+  font-weight: bold;
+  color: #00ffcc;
+}
+
+.badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: gold;
+  color: black;
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.btn {
+  display: inline-block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  text-decoration: none;
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+.call { background:#27ae60; color:white; }
+.whatsapp { background:#25D366; color:white; margin-left:5px; }
+
+.add-pg {
+  text-align: center;
+  margin: 40px 0;
+}
+
+.add-pg a {
+  background: #ff4757;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🏠 Nanded City PG Booking</h1>
+<p>Find Best PGs Near Nanded City</p>
+</header>
+
+<div class="container">
+
+<div class="controls">
+<input type="text" id="search" placeholder="Search by area...">
+<select id="sortPrice">
+<option value="">Sort by Price</option>
+<option value="low">Low to High</option>
+<option value="high">High to Low</option>
+</select>
+
+<select id="sortLocation">
+<option value="">Sort by Location</option>
+<option value="asc">A-Z</option>
+<option value="desc">Z-A</option>
+</select>
+</div>
+
+<div class="pg-grid" id="pgList"></div>
+
+<div class="add-pg">
+<a href="https://forms.gle/hH5cpyp4i5gTzu559" target="_blank">
+➕ Add Your PG
+</a>
+</div>
+
+</div>
+
+<script>
+
+const pgs = [
+{name:"Shree Ganesh PG", area:"Dhayari", room:"1RK", price:4500, phone:"9876543210", img:"https://images.unsplash.com/photo-1560448204-e02f11c3d0e2"},
+{name:"Sai Krupa PG", area:"Nanded Phata", room:"1BHK", price:6500, phone:"9123456780", img:"https://images.unsplash.com/photo-1507089947368-19c1da9775ae"},
+{name:"Om Residency", area:"Sinhgad Road", room:"1RK", price:5000, phone:"9988776655", img:"https://images.unsplash.com/photo-1522708323590-d24dbb6b0267"},
+{name:"Mahalaxmi PG", area:"Manik Baug", room:"1BHK", price:7000, phone:"9090909090", img:"https://images.unsplash.com/photo-1493809842364-78817add7ffb"},
+{name:"Green View PG", area:"Wadgaon", room:"1RK", price:4800, phone:"9012345678", img:"https://images.unsplash.com/photo-1505691723518-36a5ac3be353"},
+{name:"Royal Living PG", area:"Nanded City", room:"1BHK", price:8000, phone:"9345678123", img:"https://images.unsplash.com/photo-1502672260266-1c1ef2d93688"}
+];
+
+const container = document.getElementById("pgList");
+const searchInput = document.getElementById("search");
+const sortPrice = document.getElementById("sortPrice");
+const sortLocation = document.getElementById("sortLocation");
+
+function displayPGs(list){
+container.innerHTML="";
+list.forEach(pg=>{
+container.innerHTML+=`
+<div class="pg-card">
+${pg.price > 7000 ? '<div class="badge">⭐ Featured</div>' : ''}
+<img src="${pg.img}">
+<div class="pg-content">
+<h3>${pg.name}</h3>
+<p>📍 ${pg.area}</p>
+<p>🏠 ${pg.room}</p>
+<p class="price">₹${pg.price}/month</p>
+<a class="btn call" href="tel:${pg.phone}">Call</a>
+<a class="btn whatsapp" href="https://wa.me/91${pg.phone}" target="_blank">WhatsApp</a>
+</div>
+</div>`;
+});
+}
+
+function applyFilters(){
+let filtered=[...pgs];
+
+if(searchInput.value){
+filtered=filtered.filter(pg=>pg.area.toLowerCase().includes(searchInput.value.toLowerCase()));
+}
+
+if(sortPrice.value==="low"){
+filtered.sort((a,b)=>a.price-b.price);
+}
+if(sortPrice.value==="high"){
+filtered.sort((a,b)=>b.price-a.price);
+}
+
+if(sortLocation.value==="asc"){
+filtered.sort((a,b)=>a.area.localeCompare(b.area));
+}
+if(sortLocation.value==="desc"){
+filtered.sort((a,b)=>b.area.localeCompare(a.area));
+}
+
+displayPGs(filtered);
+}
+
+searchInput.addEventListener("input",applyFilters);
+sortPrice.addEventListener("change",applyFilters);
+sortLocation.addEventListener("change",applyFilters);
+
+displayPGs(pgs);
+
+</script>
+
+</body>
+</html>
